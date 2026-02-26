@@ -66,6 +66,34 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${maven-compiler-plugin.version}</version>
             </plugin>
+            <!--
+                WORKAROUND: Explicit resource copying until Maven Core PR 11505 is released.
+                See: https://github.com/apache/maven/pull/11505
+            -->
+            <!-- tag::resources-workaround[] -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.3.1</version>
+                <executions>
+                    <execution>
+                        <id>copy-cli-resources</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.outputDirectory}/com.openelements.showcases.analyzer.cli</outputDirectory> <!--1-->
+                            <resources>
+                                <resource>
+                                    <directory>src/com.openelements.showcases.analyzer.cli/main/resources</directory> <!--2-->
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- end::resources-workaround[] -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
@@ -83,6 +111,46 @@
                     </execution>
                 </executions>
             </plugin>
+            <!--
+                WORKAROUND: Explicit JAR creation until Maven Core PR 11549 and JAR Plugin PR 508 are released.
+                See: https://github.com/apache/maven/pull/11549
+                See: https://github.com/apache/maven-jar-plugin/pull/508
+            -->
+            <!-- tag::jar-workaround[] -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.4.2</version>
+                <executions>
+                    <execution>
+                        <id>default-jar</id>
+                        <phase>none</phase> <!--1-->
+                    </execution>
+                    <execution>
+                        <id>jar-core</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <classesDirectory>${project.build.outputDirectory}/com.openelements.showcases.analyzer.core</classesDirectory> <!--2-->
+                            <classifier>core</classifier> <!--3-->
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>jar-cli</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <classesDirectory>${project.build.outputDirectory}/com.openelements.showcases.analyzer.cli</classesDirectory>
+                            <classifier>cli</classifier>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- end::jar-workaround[] -->
         </plugins>
     </build>
 </project>
