@@ -27,7 +27,6 @@ Java 9 introduced _[Java Modules](https://openjdk.org/jeps/261)_, providing modu
 With `module-info.java` descriptors, modules can declare explicit dependencies and control which packages are accessible to other modules.
 
 > [!NOTE]
-> **Terminology**
 >
 >
 > The official name is _Java Platform Module System_, but we use the more accessible term _Java Modules_ throughout this series.
@@ -54,7 +53,6 @@ With the new _module source hierarchy_, you can define multiple Java modules wit
 This gives you the benefits of Java Modules encapsulation without the overhead of managing multiple Maven modules.
 
 > [!NOTE]
-> **Maven 4's Innovation: Multiple Java Modules in a Single Project**
 >
 >
 > Both Maven 3 and [Gradle](https://docs.gradle.org/current/samples/sample_java_modules_multi_project.html) support compiling and running Java modules.
@@ -116,7 +114,6 @@ Each Java module contains a `module-info.java` at the root of its source directo
 This file is the module descriptor that defines the module’s name, its dependencies, and which packages it exposes to other modules (cf. [Defining Module Dependencies](#defining-module-dependencies)).
 
 > [!NOTE]
-> **Module Names and Directory Names**
 >
 >
 > You’ll notice that the module names (e.g., `com.openelements.showcases.analyzer.core`) match the directory names under `src/`.
@@ -150,7 +147,6 @@ The `exports` directive makes packages visible to other modules.
 Packages not exported are _encapsulated_ – they cannot be accessed from outside the module, even via reflection.
 
 > [!NOTE]
-> **Module Dependencies and Maven Dependencies**
 >
 >
 > The `requires` directive in `module-info.java` declares compile-time and runtime dependencies at the Java module level.
@@ -204,7 +200,7 @@ Run the application using the module path:
 ```bash
 java --module-path "target/classes:target/lib" \
      --module com.openelements.showcases.analyzer.cli/com.openelements.showcases.analyzer.cli.AnalyzerCommand \
-     README.md
+     README.*
 ```
 1. The module path contains:
    * The exploded modules from the `target/classes/` directory
@@ -215,7 +211,6 @@ java --module-path "target/classes:target/lib" \
 On Windows, you need to use a semicolon (`;`) instead of a colon (`:`) to separate paths in the `--module-path` argument.
 
 > [!IMPORTANT]
-> **Module Path Instead of Classpath**
 >
 >
 > Note that we do not specify the classpath anymore when using modules.
@@ -256,7 +251,7 @@ If you take a close look at the Maven output and the resulting target directory 
 You may try to package the application as a JAR file and run it from there by executing `./mvnw package` (a JAR file will appear in the `target` folder).
 What do you observe when trying to run the JAR file by replacing the `target/classes` path with the JAR file path in the `--module-path` argument?
 
-We will address both issues in one of the next articles.
+We address both issues in the [follow-up homework article](https://open-elements.com/posts/2026/02/26/java-modules-maven4-basics-homework/).
 
 ---
 
