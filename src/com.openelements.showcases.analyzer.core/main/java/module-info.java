@@ -9,5 +9,6 @@ module com.openelements.showcases.analyzer.core {
 
     exports com.openelements.showcases.analyzer.core.model; // <2>
     exports com.openelements.showcases.analyzer.core.service; // <2>
+    // Note: com.openelements.showcases.analyzer.core.internal is NOT exported // <3>
 }
 // end::module-info[]

@@ -2,6 +2,9 @@ package com.openelements.showcases.analyzer.core.service;
 
 import com.openelements.showcases.analyzer.core.model.Document;
 import com.openelements.showcases.analyzer.core.model.Statistics;
+// tag::import-internal[]
+import com.openelements.showcases.analyzer.core.internal.TextNormalizer;
+// end::import-internal[]
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -10,7 +13,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -19,8 +21,6 @@ import java.util.stream.Collectors;
 public class TextAnalyzer {
 
     private static final Logger LOG = LogManager.getLogger(TextAnalyzer.class);
-    private static final Pattern WORD_PATTERN = Pattern.compile("\\s+");
-    private static final Pattern NON_WORD_CHARS = Pattern.compile("[^\\p{L}\\p{N}]");
 
     private final int topWordsLimit;
 
@@ -45,7 +45,9 @@ public class TextAnalyzer {
         String[] lines = content.split("\\R");
         long lineCount = lines.length;
 
-        String[] words = extractWords(content);
+        // tag::use-normalizer[]
+        String[] words = TextNormalizer.tokenize(content);
+        // end::use-normalizer[]
         long wordCount = words.length;
 
         long characterCount = content.length();
@@ -55,7 +57,6 @@ public class TextAnalyzer {
 
         Map<String, Long> wordFrequencies = Arrays.stream(words)
                 .filter(word -> !word.isEmpty())
-                .map(String::toLowerCase)
                 .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
 
         List<Map.Entry<String, Long>> topWords = wordFrequencies.entrySet().stream()
@@ -77,10 +78,4 @@ public class TextAnalyzer {
         );
     }
 
-    private String[] extractWords(String content) {
-        return WORD_PATTERN.splitAsStream(content)
-                .map(word -> NON_WORD_CHARS.matcher(word).replaceAll(""))
-                .filter(word -> !word.isEmpty())
-                .toArray(String[]::new);
-    }
 }
